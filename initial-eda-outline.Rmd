@@ -1,15 +1,20 @@
 ---
 title: "Initial EDA Basic Outline"
-author: "Names of all group members"
+author: "Edward Cho"
 output: html_notebook
 ---
 
-This is an outline for your Initial EDA. You can follow this outline, or you can modify it as you see fit. Do what works best for your project. 
+This is an outline for your Initial EDA. You can follow this outline, or you can modify it as you see fit. Do what works best for your project.
+```{r message = FALSE}
+library(tidyverse)
+```
+
 
 ## Research Question 
 
 State your specific research question and why it is interesting. 
-
+(Research Question) I want to know what the salary of India's software industry is and compare that to global food prices (in India)? 
+(Why?) I find this interesting because I want to know how sustainable life is for those in the software industry in India (I couldn't find any other "salary data sets" so I chose this one) to see an earn money to buy food ratio.
 
 
 ## Data Processing 
@@ -17,25 +22,108 @@ State your specific research question and why it is interesting.
 #### Data Intake 
 
 Include R code and written explanation to import your **TWO** data sets.
+```{r}
+# India Software Industry Data == ISID
+ISID <- read.csv("C:/Users/plane/Downloads/Salary_Dataset_with_Extra_Features.csv")
+# Food Data Set == FDS
+FDS <- read.csv("C:/Users/plane/Downloads/data.csv")
+```
+
+Instead of global food prices I chose to go with only India.
+I used a different Food Data set because the other data set didn't have India so I used a data set from WFP (World Food Programme) 
+
+India Software Industry Data Set
+https://www.kaggle.com/datasets/iamsouravbanerjee/software-professional-salaries-2022?resource=download
+
+Food Data Set - WFP (I specifically chose Tomatos as my data because it is the most commonly used food for tomato-based curry)
+https://data.humdata.org/organization/wfp?vocab_Topics=prices
+
 
 #### Data Wrangling 
 
-Include R code and written explanation for wangling your data (you can make multiple wrangled data sets). 
+Include R code and written explanation for wrangling your data (you can make multiple wrangled data sets).
+
+The mean of money in each Location in India
+```{r}
+MeanSoftwareSalaryIndia <-
+  ISID %>%
+  group_by( Location ) %>%
+  summarise( Companies = n(),
+             Mean_Salary = mean( Salary, na.rm = TRUE ))
+
+head(MeanSoftwareSalaryIndia, 10)
+```
+Mumbai seems to be making the most out of all the other software companies on average.
 
 
+Mean salary and compare that to the food prices of tomatoes
+```{r}
+MeanSalaryVsTomatoesPerKGinIndia <-
+  ISID  %>%
+  cross_join( FDS ) %>%
+  select( Price.of.Tomatoes.per.KG.in.India, Salary) %>%
+  summarise( Mean_Price_of_Tomatoes = mean( Price.of.Tomatoes.per.KG.in.India, na.rm = TRUE), Mean_Salary = mean( Salary, na.rm = TRUE)) %>%
+  na.omit()
 
+head(MeanSalaryVsTomatoesPerKGinIndia)
+```
+Unfortunately it didn't work because there was no variable to connect each other.
+
+So I can make this table instead
+```{r}
+MeanSalaryVsTomatoesPerKGinIndia <-
+  ISID  %>%
+  cross_join( FDS ) %>%
+  select( Price.of.Tomatoes.per.KG.in.India, Salary) %>%
+  na.omit()
+
+head(MeanSalaryVsTomatoesPerKGinIndia)
+```
+Which doesn't has no connection to anything in terms of price or salary.
 
 ## Data Visualization
 
 #### Plot 1
 
 Include R code to make one data visualization (I would encourage you to use 3 or more variables). Include a brief written description of what your graph shows. Is this graph helpful in answering your research question? If it is helpful, will you need to add/modify anything in this graph in the final report? 
+```{r}
+#esquisser(MeanSoftwareSalaryIndia)
+
+ggplot(MeanSoftwareSalaryIndia) +
+  aes(x = Mean_Salary, y = Location, size = Companies) +
+  geom_boxplot(fill = "#112446") +
+  theme_minimal()
+```
+Not exactly the best graph, but it shows the average salary for those in the Software Industry in India.
+No, It shows an in-depth analysis of the average salary but doesn't show a connection to food prices because there are no dates. 
+(How to Improve) If it were connected and had a money to date ratio then it could have played a better role in helping my research question.
 
 #### Plot 2
 
 Include R code to make one data visualization (I would encourage you to use 3 or more variables). Include a brief written description of what your graph shows. Is this graph helpful in answering your research question? If it is helpful, will you need to add/modify anything in this graph in the final report? 
+```{r}
+NewGlyphData <-
+  ISID  %>%
+  cross_join( FDS ) %>%
+  select( Price.of.Tomatoes.per.KG.in.India, Location, Salary) %>%
+  na.omit()
 
+ggplot(NewGlyphData) +
+  aes(
+    x = Salary,
+    y = Price.of.Tomatoes.per.KG.in.India,
+    colour = Location
+  ) +
+  geom_boxplot(fill = "#112446") +
+  scale_color_hue(direction = 1) +
+  theme_minimal()
+```
+It shows price of tomatoes per KG in India compared to Software Industry salaries in India, while the colour is the location.
+No, it shows price of tomatoes per KG vs Salary but fails to show any relation or correlation to each other. 
+(How to Improve) I need some component that can actually connect both data sets.
 
 ## Conclusion
 
 Include your initial intuition as to what the answer to your research question is using the data sets and visualizations you created. 
+
+It is inconclusive because of lack of important data that relates to the research question. The visualizations need a connecting factor so that the data sets could relate to each other so that the task of Food Prices (in India) vs Salary in India (for those in the Software Industry) can be used.
