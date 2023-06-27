@@ -23,10 +23,11 @@ The official rubric can be found on the "Submit Final Project Report" on Canvas.
 *Description: (1) Analysis includes at least two different data sources. (2) Primary data source may NOT be loaded from an R package--though supporting data may. (3) Access to all data sources is contained within the analysis. (4) All imported data is inspected at beginning of analysis using one or more R functions: e.g., str, glimpse, head, tail, names, nrow, etc*
 
 (A) .Rmd Line numbers where at least two different data sources are imported:  
-
+First data set, Lines 20 to 24
+Secondth data set, Lines 27 to 31
 
 (B) .Rmd Line numbers for inspecting data intake:  
-
+Lines 25 and 32
 
 ### Data Wrangling (5 out of 7 required)
 
@@ -34,18 +35,19 @@ The official rubric can be found on the "Submit Final Project Report" on Canvas.
 
 
 (A) .Rmd Line number(s) for general data wrangling: 
-
+32 to 44
 
 (B) .Rmd Line number(s) for a join operation: 
-
+47
 
 (C) .Rmd Line number(s) for use of reduction and/or transformation functions: 
+53
 
 (D) .Rmd Line number(s) for a pivot_wider or pivot_longer operation (or equivalent):
-
+53
 
 (E) .Rmd Line number(s) for use of regular expressions: 
-
+34, 35, 41, 42, 49
 
 (F) .Rmd Line number(s) for use of user-defined functions: 
 
@@ -61,12 +63,15 @@ The official rubric can be found on the "Submit Final Project Report" on Canvas.
 
 
 (A) .Rmd Line number(s) for use of multiple different geoms on a single plot:  
+75, 80
 
 (B) .Rmd Line number(s) for use of multiple aesthetics:  
+66, 74, 79
 
 (C) .Rmd Line number(s) for use of layered graphics:  
 
 (D) .Rmd Line number(s) for use of maps:  
+67, 75 include the map/guide inside the graph (i.e. it did it for me)
 
 (E) .Rmd Line number(s) for use of decision tree or dendogram:    
 

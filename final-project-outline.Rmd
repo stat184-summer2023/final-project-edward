@@ -1,37 +1,88 @@
 ---
 title: "Final Project Basic Outline"
-author: "Names of all group members"
+author: "Edward Cho"
 output: html_notebook
 ---
 
-This is an outline for your final project. You can follow this outline, or you can modify it as you see fit. Do what works best for your project. 
-
 ## Research Question 
 
-State your general specific question and why it is interesting. 
-
-
+Which city in India has the most companies compared to having a job in a Tech Company or being a Data Scientist, Analyst, and other? Additionally, I want to know the difference between Tech Company Salaries and Data Scientists, Analysts, and others have a salary advantage compared to other cities in India?
 
 ## Data Processing 
+```{r message = FALSE}
+library(tidyverse)
+library(ggplot2)
+```
+
 
 #### Data Intake 
 
-Include R code and written explanation to import your **TWO** data sets.
+```{r}
+TechCompany.Salaries <- read.csv("Salary_Dataset_with_Extra_Features.csv")
+DataJobs.Salaries <- read.csv("Partially_Cleaned_Salary_Dataset.csv")
+
+TechCompany.Salaries
+DataJobs.Salaries
+```
+The code is from the directory and to ensure that the data is complied properly. I used these two data sets for their relation of Bangalore. Additionally, the both data sets with "Salary" are in rupees.
 
 #### Data Wrangling 
 
-Include R code and written explanation for wangling your data (you can make multiple wrangled data sets). 
+```{r}
+MeanSalaryOfTechJob <-
+  TechCompany.Salaries %>%
+  group_by( Location ) %>%
+  summarise( Companies = n(),
+             Mean_SalaryTech = mean( Salary, na.rm = TRUE )) %>%
+  arrange(desc(Mean_SalaryTech))
 
+MeanSalaryOfDataJob <-
+  DataJobs.Salaries %>%
+  group_by( Location ) %>%
+  summarise( Companies = n(),
+             Mean_SalaryData = mean( Salary, na.rm = TRUE )) %>%
+  arrange(desc(Mean_SalaryData))
 
+JoinedData <-
+  full_join( TechCompany.Salaries, DataJobs.Salaries ) %>%
+  select( Company.Name, Location, Salary ) %>%
+  group_by( Salary ) %>%
+  arrange( desc(Salary) ) %>%
+  na.omit()
 
+bind_rows(MeanSalaryOfTechJob, MeanSalaryOfDataJob)
+
+head(JoinedData)
+```
+The first graph was to see all in one of Tech vs Data Jobs. The second one is to see which Location had the most salary on average (in rupees).
 
 ## Data Visualization
 
 Include R code and written explanation for your data visualization(s) with at least 3 variables. You must have **at least** one graph. You may have more than one (I would encourage you to have more than one). 
 
 
+```{r}
+ggplot(MeanSalaryOfTechJob) +
+  aes(x = Companies, y = Location, size = Mean_SalaryTech) +
+  geom_boxplot(fill = "#112446") +
+  theme_minimal()
+```
+This graph is a bar plot that shows the amount of companies located in India who are in "Tech Companies" as well as the Average Salary in Rupees.
 
+```{r}
+ggplot(MeanSalaryOfDataJob) +
+  aes(x = Companies, y = Location, size = Mean_SalaryData) +
+  geom_boxplot(fill = "#112446") +
+  theme_minimal()
+
+ggplot(MeanSalaryOfDataJob) +
+  aes(x = Companies, y = Location, size = Mean_SalaryData) +
+  geom_dotplot(fill = "#112446") +
+  theme_minimal()
+```
+This graph is a bar plot that shows the amount of companies located in India who are Data Scientists, Analysts or others as well as the Average Salary in Rupees.
+The other graph doesn't really work and I couldn't really think of a different geom that could effectively display in the proper format.
 
 ## Conclusion
 
-Answer your research question using the data sets and visualizations you created. 
+Both jobs have a different amount of companies in India for their respective fields. The reason being that both graphs has Bangalore with the most companies in both fields as it is mostly an outlier compared to other cities in India. The people who earn the most are Mumbai for those in the Tech Industry and the Data Industry have three that are very close to each other which are Pune, Hyderabad, and Bangalore.
